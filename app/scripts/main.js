@@ -196,7 +196,7 @@ $(function(){
   });
 
   new Raster({
-    source:'images/sunn.png'
+    source:'https://cloud.githubusercontent.com/assets/1858099/3948391/b321a62e-26a4-11e4-98a0-530fe1c5de09.png'
   , position:SUNN.iconPosition
   }).scale(SUNN.iconScale);
 
@@ -208,7 +208,7 @@ $(function(){
   });
 
   new Raster({
-    source:'images/globe.png'
+    source:'https://cloud.githubusercontent.com/assets/1858099/3948392/b56e30e6-26a4-11e4-9bcd-7f35cf3e3755.png'
   , position:SUNN.globePosition
   , opacity:0.5
   }).scale(SUNN.globeScale);
