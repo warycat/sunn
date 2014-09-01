@@ -4,8 +4,8 @@ var tick = 0;
 
 var SUNN = (function(){
   var currentMoment = function(){
-    return moment();
-    // return moment().add(10 * tick,'second');
+    // return moment();
+    return moment().add(100 * tick,'second');
   };
   var width = 768;
   var height = 1024;
@@ -227,8 +227,20 @@ $(function(){
   , strokeCap:'round'
   });
 
+  var rulerA = new Group();
+  var rulerB = new Group();
+
+  function hide(){
+    var h = SUNN.currentMoment().hour() % 12;
+    if(this.h - 1 < h){
+      this.visible = false;
+    }else{
+      this.visible = true;
+    }
+  }
+
   for(var n = 0;n<=12;n++){
-    new Path.Line({
+    var lineA = new Path.Line({
       from: new Point(SUNN.rulerZeroPosition.x - SUNN.rulerLength, SUNN.rulerZeroPosition.y + n * SUNN.rulerDirection * SUNN.rulerSpacing)
     , to: new Point(SUNN.rulerZeroPosition.x, SUNN.rulerZeroPosition.y + n * SUNN.rulerDirection * SUNN.rulerSpacing)
     , strokeColor: 'white'
@@ -236,18 +248,73 @@ $(function(){
     , strokeCap:'square'
     });
 
-    new PointText({
+    var textA = new PointText({
       point: new Point(SUNN.rulerZeroPosition.x - SUNN.rulerLength - SUNN.rulerTextSpacing, SUNN.rulerZeroPosition.y + n * SUNN.rulerDirection * SUNN.rulerSpacing + 7)
     , content:n+''
     , justification:'right'
     , fillColor:'white'
     , fontSize:SUNN.rulerTextSize
     });
+
+    rulerA.addChild(lineA);
+    rulerA.addChild(textA);
+
+    var lineB = new Path.Line({
+      from: new Point(SUNN.rulerZeroPosition.x - SUNN.rulerLength, SUNN.rulerZeroPosition.y - n * SUNN.rulerDirection * SUNN.rulerSpacing)
+    , to: new Point(SUNN.rulerZeroPosition.x, SUNN.rulerZeroPosition.y - n * SUNN.rulerDirection * SUNN.rulerSpacing)
+    , strokeColor: 'white'
+    , strokeWidth: SUNN.rulerWidth
+    , strokeCap:'square'
+    });
+
+    var textB = new PointText({
+      point: new Point(SUNN.rulerZeroPosition.x - SUNN.rulerLength - SUNN.rulerTextSpacing, SUNN.rulerZeroPosition.y - n * SUNN.rulerDirection * SUNN.rulerSpacing + 7)
+    , content:n+''
+    , justification:'right'
+    , fillColor:'white'
+    , fontSize:SUNN.rulerTextSize
+    });
+
+    rulerB.addChild(lineB);
+    rulerB.addChild(textB);
+
+    lineA.h = n;
+    lineB.h = n;
+    textA.h = n;
+    textB.h = n;
+    lineA.onFrame = hide;
+    lineB.onFrame = hide;
+    textA.onFrame = hide;
+    textB.onFrame = hide;
   }
+
+  rulerA.offset = 0;
+  rulerB.offset = 0;
+
+  rulerA.onFrame = function(){
+    rulerA.translate(new Point(0, + rulerA.offset));
+    rulerA.offset = SUNN.rulerSpacing * 12 * (SUNN.currentMoment().minute() + SUNN.currentMoment().hour()%12 * 60) / 720;
+    rulerA.translate(new Point(0, - rulerA.offset));
+  };
+
+  rulerB.onFrame = function(){
+    rulerB.translate(new Point(0, - rulerB.offset));
+    rulerB.offset = SUNN.rulerSpacing * 12 * (SUNN.currentMoment().minute() + SUNN.currentMoment().hour()%12 * 60) / 720;
+    rulerB.translate(new Point(0, + rulerB.offset));
+  };
 
   view.onFrame = function(event){
     tick = event.count;
     glare();
+    var h = SUNN.currentMoment().hour();
+    console.log(h);
+    if(h<12){
+      rulerA.visible = false;
+      rulerB.visible = true;
+    }else{
+      rulerB.visible = false;
+      rulerA.visible = true;
+    }
   };
 
 
