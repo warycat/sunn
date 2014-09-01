@@ -26,12 +26,20 @@ var SUNN = (function(){
   var titleColor = '#ffffff';
   var titlePosition = new Point(width/2, 100);
 
-  var clockText = '6:43';
+  var clockText = function(){
+    var h = moment().format('h');
+    h = (h.length<2)? (' ' + h) : h;
+    var m = moment().format('mm');
+    var s = moment().format('s');
+    return h + ((s%2)?':':' ') + m;
+  };
   var clockSize = 80;
   var clockColor = '#e18422';
   var clockPosition = new Point(width/2, height/2);
 
-  var dateText = 'July 21st';
+  var dateText = function(){
+    return moment().format('MMM Do, YYYY');
+  };
   var dateSize = 20;
   var dateColor = '#e18422';
   var datePosition = new Point(width/2, height/2 + 30);
@@ -164,26 +172,32 @@ $(function(){
   , content:SUNN.titleText
   , fillColor:SUNN.titleColor
   , justification:'center'
-  , fontFamily:'Raleway,helvetica,arial'
+  , fontFamily:'helvetica,arial'
   , fontSize:SUNN.titleSize
   });
 
   new PointText({
     point:SUNN.clockPosition
-  , content:SUNN.clockText
+  , content:SUNN.clockText()
   , fillColor:SUNN.clockColor
   , justification:'center'
-  , fontFamily:'Raleway,helvetica,arial'
+  , fontFamily:'helvetica,arial'
   , fontSize:SUNN.clockSize
+  , onFrame:function(){
+      this.content = SUNN.clockText();
+    }
   });
 
   new PointText({
     point:SUNN.datePosition
-  , content:SUNN.dateText
+  , content:SUNN.dateText()
   , fillColor:SUNN.dateColor
   , justification:'center'
-  , fontFamily:'Raleway,helvetica,arial'
+  , fontFamily:'helvetica,arial'
   , fontSize:SUNN.dateSize
+  , onFrame:function(){
+      this.content = SUNN.dateText();
+    }
   });
 
   new PointText({
@@ -191,7 +205,7 @@ $(function(){
   , content:SUNN.cityText
   , fillColor:SUNN.cityColor
   , justification:'center'
-  , fontFamily:'Raleway,helvetica,arial'
+  , fontFamily:'helvetica,arial'
   , fontSize:SUNN.citySize
   });
 
@@ -239,5 +253,6 @@ $(function(){
     });
   }
 
-  view.draw();
 });
+
+

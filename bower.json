@@ -6,7 +6,9 @@
     "modernizr": "~2.6.2",
     "jquery": "~1.11.0",
     "groundwork": "~2.5.0",
-    "pixi.js": "~1.6.1"
+    "pixi.js": "~1.6.1",
+    "moment": "~2.8.2",
+    "paper": "~0.9.20"
   },
   "devDependencies": {}
 }
