@@ -1,6 +1,12 @@
 paper.install(window);
 
+var tick = 0;
+
 var SUNN = (function(){
+  var currentMoment = function(){
+    return moment();
+    // return moment().add(10 * tick,'second');
+  };
   var width = 768;
   var height = 1024;
   var sunLayers = 4;
@@ -27,9 +33,8 @@ var SUNN = (function(){
   var titlePosition = new Point(width/2, 100);
 
   var clockText = function(){
-    var h = moment().format('h');
-    h = (h.length<2)? (' ' + h) : h;
-    var m = moment().format('mm');
+    var h = currentMoment().format('hh');
+    var m = currentMoment().format('mm');
     var s = moment().format('s');
     return h + ((s%2)?':':' ') + m;
   };
@@ -38,7 +43,7 @@ var SUNN = (function(){
   var clockPosition = new Point(width/2, height/2);
 
   var dateText = function(){
-    return moment().format('MMM Do, YYYY');
+    return currentMoment().format('MMM Do, YYYY');
   };
   var dateSize = 20;
   var dateColor = '#e18422';
@@ -71,7 +76,8 @@ var SUNN = (function(){
   var rulerZeroPosition = new Point(middleRight);
 
   return {
-    width:width
+    currentMoment:currentMoment
+  , width:width
   , height:height
   , sunLayers:sunLayers
   , radius:radius
@@ -148,23 +154,11 @@ $(function(){
     , destination:SUNN.bottomMiddle
     }
   });
-
-  for(var i = 0;i<SUNN.sunLayers;i++){
-    var radius = SUNN.radius + i * SUNN.increment;
-
-    new Path.Circle({
-      center:SUNN.center
-    , radius:radius
-    , fillColor:SUNN.lightColor
-    , opacity:0.5
-    });
-  }
-
-  new Path.Circle({
+  
+  var sun = new Path.Circle({
     center:SUNN.center
   , radius:SUNN.radius
   , fillColor:SUNN.sunColor
-  , opacity:0.5
   });
 
   new PointText({
@@ -172,7 +166,7 @@ $(function(){
   , content:SUNN.titleText
   , fillColor:SUNN.titleColor
   , justification:'center'
-  , fontFamily:'helvetica,arial'
+  , fontFamily:'arial,helvetica'
   , fontSize:SUNN.titleSize
   });
 
@@ -181,7 +175,7 @@ $(function(){
   , content:SUNN.clockText()
   , fillColor:SUNN.clockColor
   , justification:'center'
-  , fontFamily:'helvetica,arial'
+  , fontFamily:'arial,helvetica'
   , fontSize:SUNN.clockSize
   , onFrame:function(){
       this.content = SUNN.clockText();
@@ -193,7 +187,7 @@ $(function(){
   , content:SUNN.dateText()
   , fillColor:SUNN.dateColor
   , justification:'center'
-  , fontFamily:'helvetica,arial'
+  , fontFamily:'arial,helvetica'
   , fontSize:SUNN.dateSize
   , onFrame:function(){
       this.content = SUNN.dateText();
@@ -205,7 +199,7 @@ $(function(){
   , content:SUNN.cityText
   , fillColor:SUNN.cityColor
   , justification:'center'
-  , fontFamily:'helvetica,arial'
+  , fontFamily:'arial,helvetica'
   , fontSize:SUNN.citySize
   });
 
@@ -252,6 +246,35 @@ $(function(){
     , fontSize:SUNN.rulerTextSize
     });
   }
+
+  view.onFrame = function(event){
+    tick = event.count;
+    glare();
+  };
+
+
+  function glare(){
+    if(tick % 30 === 0){
+      var ray = new Path.Circle({
+        center:SUNN.center
+      , radius:SUNN.radius
+      , fillColor:SUNN.lightColor
+      , opacity:1
+      , onFrame:function(){
+          this.scale(1.003);
+          this.life--;
+          this.opacity = this.life / 100;
+          if(this.life === 0){
+            this.remove();
+          }
+        }
+      });
+      ray.life = 100;
+      ray.insertBelow(sun);
+    }
+  }
+
+
 
 });
 
