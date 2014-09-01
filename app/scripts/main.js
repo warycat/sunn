@@ -137,8 +137,6 @@ var SUNN = (function(){
 
 })();
 
-console.log(SUNN);
-
 $(function(){
   var canvas = $('canvas')[0];
   paper.setup(canvas);
