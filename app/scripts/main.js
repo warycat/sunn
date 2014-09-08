@@ -1,3 +1,7 @@
+Modernizr.addTest('iphone', function () {
+  return !!navigator.userAgent.match(/iPhone/i);
+});
+
 paper.install(window);
 
 var tick = 0;
@@ -11,6 +15,8 @@ function hexToRgb(hex) {
   } : null;
 }
 
+var _width = $(window).width();
+var _height = $(window).height();
 
 var SUNN = (function(){
   var currentMoment = function(){
@@ -23,12 +29,19 @@ var SUNN = (function(){
   var sunsetHour = 7;
   var sunsetMinute = 18;
 
-  var width = 768;
-  var height = 1024;
+  var width = function(){
+    return _width;
+  };
+  var height = function(){
+    return _height;
+  };
+  var size = function(){
+    return new Point(_width,_height);
+  };
   var sunLayers = 4;
-  var radius = 150;
-  var increment = 10;
-  var center = new Point(width/2, height/2);
+  var radius = Modernizr.iphone?75:150;
+  var increment = Modernizr.iphone?5:10;
+  var center = new Point(width()/2, height()/2);
 
   var sunColors = [
     '#ff0000','#ff2200','#ff4400','#ff6600', '#ff8800','#ffaa00'
@@ -68,22 +81,40 @@ var SUNN = (function(){
   var skyBottomColor = '#0d73cc';
   var skyColors = [skyTopColor, skyMiddleColor,skyBottomColor];
 
-  var topLeft = new Point(0,0);
-  var topMiddle = new Point(width/2,0);
-  var topRight = new Point(width,0);
+  var topLeft = function(){
+    return new Point(0,0);
+  };
+  var topMiddle = function(){
+    return new Point(width()/2,0);
+  };
+  var topRight = function(){
+    return new Point(width(),0);
+  };
 
-  var middleLeft = new Point(0,height/2);
-  var middleMiddle = new Point(width/2,height/2);
-  var middleRight = new Point(width,height/2);
+  var middleLeft = function(){
+    return new Point(0,height()/2);
+  };
+  var middleMiddle = function(){
+    return new Point(width()/2,height()/2);
+  };
+  var middleRight = function(){
+    return new Point(width(),height()/2);
+  };
 
-  var bottomLeft = new Point(0,height);
-  var bottomMiddle = new Point(width/2,height);
-  var bottomRight = new Point(width,height);
+  var bottomLeft = function(){
+    return new Point(0,height());
+  };
+  var bottomMiddle = function(){
+    return new Point(width()/2,height());
+  };
+  var bottomRight = function(){
+    return new Point(width(),height());
+  };
 
   var titleText = 'Lights synched with sunn';
-  var titleSize = 40;
+  var titleSize = Modernizr.iphone?16:40;
   var titleColor = '#ffffff';
-  var titlePosition = new Point(width/2, 100);
+  var titlePosition = new Point(width()/2, Modernizr.iphone?50:100);
 
   var clockText = function(){
     var h = currentMoment().format('hh');
@@ -91,47 +122,46 @@ var SUNN = (function(){
     var s = moment().format('s');
     return h + ((s%2)?':':' ') + m;
   };
-  var clockSize = 80;
+  var clockSize = Modernizr.iphone?40:80;
   var clockColor = '#e18422';
-  var clockPosition = new Point(width/2, height/2);
+  var clockPosition = new Point(width()/2, height()/2);
 
   var dateText = function(){
     return currentMoment().format('MMM Do, YYYY');
   };
-  var dateSize = 20;
+  var dateSize = Modernizr.iphone?10:20;
   var dateColor = '#e18422';
-  var datePosition = new Point(width/2, height/2 + 30);
+  var datePosition = new Point(width()/2, height()/2 + (Modernizr.iphone?15:30));
 
   var cityText = 'Boulder Colorado';
-  var citySize = 30;
+  var citySize = Modernizr.iphone?15:30;
   var cityColor = '#ffffff';
-  var cityPosition = new Point(width/2, height - 45);
+  var cityPosition = new Point(width()/2, height() - (Modernizr.iphone?25:45));
 
-  var iconPosition = new Point(60,80);
-  var iconScale = 0.3;
+  var iconPosition = new Point(Modernizr.iphone?30:60,Modernizr.iphone?40:80);
+  var iconScale = Modernizr.iphone?0.15:0.3;
 
-  var globePosition = new Point(200, height - 60);
-  var globeScale = 0.1;
-  var globeRadius = 40;
+  var globePosition = new Point(width()/2 - (Modernizr.iphone?100:200), height() - (Modernizr.iphone?30:60));
+  var globeScale = Modernizr.iphone?0.05:0.1;
+  var globeRadius = Modernizr.iphone?20:40;
 
-  var campfirePosition = [width/2,height/2+100];
-  var campfireScale = 0.1;
+  var campfirePosition = [width()/2,height()/2+(Modernizr.iphone?50:100)];
+  var campfireScale = Modernizr.iphone?0.05:0.1;
 
 
-
-  var markPosition = middleRight;
-  var markLength = 50;
-  var markWidth = 5;
+  var markPosition = middleRight();
+  var markLength = Modernizr.iphone?25:50;
+  var markWidth = Modernizr.iphone?2:5;
   var markF = new Point(markPosition.x - markLength, markPosition.y);
   var markT = new Point(markPosition.x, markPosition.y);
 
-  var rulerSpacing = 150;
-  var rulerLength = 20;
-  var rulerWidth = 3;
-  var rulerTextSize = 20;
-  var rulerTextSpacing = 10;
+  var rulerSpacing = Modernizr.iphone?75:150;
+  var rulerLength = Modernizr.iphone?10:20;
+  var rulerWidth = Modernizr.iphone?2:3;
+  var rulerTextSize = Modernizr.iphone?12:20;
+  var rulerTextSpacing = Modernizr.iphone?5:10;
   var rulerDirection = 1;
-  var rulerZeroPosition = new Point(middleRight);
+  var rulerZeroPosition = new Point(middleRight());
 
   return {
     currentMoment:currentMoment
@@ -142,6 +172,7 @@ var SUNN = (function(){
 
   , width:width
   , height:height
+  , size:size
   , sunLayers:sunLayers
   , radius:radius
   , center:center
@@ -209,59 +240,64 @@ var SUNN = (function(){
 })();
 
 $(function(){
+  $('<canvas resize></canvas>').appendTo($('body'));
   var canvas = $('canvas')[0];
   paper.setup(canvas);
 
   Path.Rectangle({
     point:[0,0]
-  , size:[SUNN.width,SUNN.height]
+  , size:SUNN.size()
   , fillColor:{
       gradient:{
         stops:[['#162883',0],['#1983db',0.5]]
       }
-    , origin:[SUNN.width/2,0]
-    , destination:[SUNN.width/2,SUNN.height]
+    , origin:SUNN.topMiddle()
+    , destination:SUNN.bottomMiddle()
     }
-  });
+  }).onFrame = function(){
+    this.size = SUNN.size();
+  };
 
   var sunriseSky = new Path.Rectangle({
-    point:SUNN.middleLeft
-  , size:[SUNN.width,-100]
+    point:SUNN.middleLeft()
+  , size:[SUNN.width(),-100]
   , fillColor:{
       gradient:{
         stops:[['#000000',0],[new Color(0,0,1,0),1]]
       }
-    , origin:[SUNN.width/2,SUNN.height/2]
-    , destination:[SUNN.width/2,SUNN.height/2-100]
+    , origin:SUNN.middleMiddle()
+    , destination:[SUNN.width()/2,SUNN.height()/2-100]
     }
   });
+
   sunriseSky.offset = 0;
 
   var sunsetSky = new Path.Rectangle({
-    point:SUNN.middleLeft
-  , size:[SUNN.width,-100]
+    point:SUNN.middleLeft()
+  , size:[SUNN.width(),-100]
   , fillColor:{
       gradient:{
         stops:[['#000000',0],[new Color(0,0,1,0),1]]
       }
-    , origin:[SUNN.width/2,SUNN.height/2]
-    , destination:[SUNN.width/2,SUNN.height/2-100]
+    , origin:SUNN.middleMiddle()
+    , destination:[SUNN.width()/2,SUNN.height()/2-100]
     }
   });
   sunsetSky.offset = 0;
 
   var sun = new Path.Circle({
-    center:SUNN.center
+    center:SUNN.middleMiddle()
   , radius:SUNN.radius
   , fillColor:SUNN.sunColor()
   , onFrame:function(){
+      this.center = SUNN.middleMiddle();
       this.fillColor = SUNN.sunColor();
     }
   });
 
   var sunriseBlack = new Path.Rectangle({
-    point:SUNN.middleLeft
-  , size:[SUNN.width,SUNN.height*2]
+    point:SUNN.middleLeft()
+  , size:[SUNN.width(),SUNN.height()*2]
   , strokeColor: 'black'
   , strokeWidth: SUNN.markWidth
   , fillColor:'black'
@@ -270,8 +306,8 @@ $(function(){
   sunriseBlack.offset = 0;
 
   var sunsetBlack = new Path.Rectangle({
-    point:SUNN.middleLeft
-  , size:[SUNN.width,SUNN.height*2]
+    point:SUNN.middleLeft()
+  , size:[SUNN.width(),SUNN.height()*2]
   , strokeColor: 'black'
   , strokeWidth: SUNN.markWidth
   , fillColor:'black'
@@ -364,28 +400,28 @@ $(function(){
   };
 
   var fire3 = new Path.Circle({
-    center:SUNN.center
+    center:SUNN.middleMiddle()
   , radius:SUNN.radius + SUNN.increment * 3
   , fillColor:'#bf1a22'
   , opacity:1
   });
 
   var fire2 = new Path.Circle({
-    center:SUNN.center
+    center:SUNN.middleMiddle()
   , radius:SUNN.radius + SUNN.increment * 2
   , fillColor:'#ed6725'
   , opacity:1
   });
 
   var fire1 = new Path.Circle({
-    center:SUNN.center
+    center:SUNN.middleMiddle()
   , radius:SUNN.radius + SUNN.increment
   , fillColor:'#fbcf28'
   , opacity:1
   });
 
   var fire0 = new Path.Circle({
-    center:SUNN.center
+    center:SUNN.middleMiddle()
   , radius:SUNN.radius
   , fillColor:'black'
   , opacity:1
@@ -459,24 +495,32 @@ $(function(){
   }).scale(SUNN.globeScale);
 
   sunriseSky.onFrame = function(){
+    this.point = SUNN.middleLeft();
+    this.size = [SUNN.width(),-100];
     sunriseSky.translate(new Point(0, - sunriseSky.offset));
     sunriseSky.offset = SUNN.rulerSpacing * 12 * (SUNN.currentMoment().minute()-SUNN.sunriseMinute + (SUNN.currentMoment().hour()%12 - SUNN.sunriseHour) * 60) / 720;
     sunriseSky.translate(new Point(0, + sunriseSky.offset));
   };
 
   sunsetSky.onFrame = function(){
+    this.point = SUNN.middleLeft();
+    this.size = [SUNN.width(),-100];
     sunsetSky.translate(new Point(0, + sunsetSky.offset));
     sunsetSky.offset = SUNN.rulerSpacing * 12 * (SUNN.currentMoment().minute()-SUNN.sunsetMinute + (SUNN.currentMoment().hour()%12 - SUNN.sunsetHour) * 60) / 720;
     sunsetSky.translate(new Point(0, - sunsetSky.offset));
   };
 
   sunriseBlack.onFrame = function(){
+    this.point = SUNN.middleLeft();
+    this.size = [SUNN.width(),SUNN.height()*2];
     sunriseBlack.translate(new Point(0, - sunriseBlack.offset));
     sunriseBlack.offset = SUNN.rulerSpacing * 12 * (SUNN.currentMoment().minute()-SUNN.sunriseMinute + (SUNN.currentMoment().hour()%12 - SUNN.sunriseHour) * 60) / 720;
     sunriseBlack.translate(new Point(0, + sunriseBlack.offset));
   };
   
   sunsetBlack.onFrame = function(){
+    this.point = SUNN.middleLeft();
+    this.size = [SUNN.width(),SUNN.height()*2];
     sunsetBlack.translate(new Point(0, + sunsetBlack.offset));
     sunsetBlack.offset = SUNN.rulerSpacing * 12 * (SUNN.currentMoment().minute()-SUNN.sunsetMinute + (SUNN.currentMoment().hour()%12 - SUNN.sunsetHour) * 60) / 720;
     sunsetBlack.translate(new Point(0, - sunsetBlack.offset));
@@ -532,4 +576,12 @@ $(function(){
 
 });
 
+function getParameterByName(name) {
+  name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+  var regex = new RegExp('[\\?&]' + name + '=([^&#]*)'),
+    results = regex.exec(location.search);
+  return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+}
 
+var ip = getParameterByName('ip');
+console.log(ip);
