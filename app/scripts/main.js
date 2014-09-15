@@ -14,12 +14,14 @@ var citycode = getParameterByName('citycode');
 var backurl = getParameterByName('backurl');
 var cityurl = getParameterByName('cityurl');
 var speed = getParameterByName('speed');
+var group = getParameterByName('group');
+var brightness = getParameterByName('brightness');
 
 function xy(x,y){
   $.ajax({
-    url:'http://'+ip+'/api/sunndeveloper/groups/0/action'
+    url:'http://'+ip+'/api/sunndeveloper/groups/'+group+'/action'
   , type:'PUT'
-  , data:JSON.stringify({on:true,xy:[x,y]})
+  , data:JSON.stringify({on:true,xy:[x,y],bri:brightness})
   }).done(function(data){
     console.log(JSON.stringify(data));
   });
@@ -131,8 +133,9 @@ $.getJSON(cityurl+'?citycode='+citycode,function(data){
     var titleTextDay = 'Lights synched with sunn';
     var titleTextNight = 'Lights synched with firelight';
     var titleSize = Modernizr.iphone?16:40;
+    var titleScale = Modernizr.iphone?0.3:0.5;
     var titleColor = '#ffffff';
-    var titlePosition = new Point(width()/2, Modernizr.iphone?50:100);
+    var titlePosition = new Point(width()/2, Modernizr.iphone?40:80);
 
     var clockText = function(){
       var h = currentMoment().format('hh');
@@ -142,14 +145,14 @@ $.getJSON(cityurl+'?citycode='+citycode,function(data){
     };
     var clockSize = Modernizr.iphone?40:80;
     var clockColor = '#e18422';
-    var clockPosition = new Point(width()/2, height()/2);
+    var clockPosition = new Point(width()/2, height()/2 + (Modernizr.iphone?10:20));
 
     var dateText = function(){
       return currentMoment().format('MMM Do, YYYY');
     };
     var dateSize = Modernizr.iphone?10:20;
     var dateColor = '#e18422';
-    var datePosition = new Point(width()/2, height()/2 + (Modernizr.iphone?15:30));
+    var datePosition = new Point(width()/2, height()/2 + (Modernizr.iphone?20:40));
 
     var cityText = data.cityname;
     var citySize = Modernizr.iphone?15:30;
@@ -164,7 +167,7 @@ $.getJSON(cityurl+'?citycode='+citycode,function(data){
     var globeRadius = Modernizr.iphone?20:40;
 
     var campfirePosition = [width()/2,height()/2+(Modernizr.iphone?50:100)];
-    var campfireScale = Modernizr.iphone?0.05:0.1;
+    var campfireScale = Modernizr.iphone?0.25:0.5;
 
 
     var markPosition = middleRight();
@@ -217,6 +220,7 @@ $.getJSON(cityurl+'?citycode='+citycode,function(data){
     , titlePosition:titlePosition
     , titleSize:titleSize
     , titleColor:titleColor
+    , titleScale:titleScale
 
     , clockText:clockText
     , clockSize:clockSize
@@ -423,21 +427,21 @@ $.getJSON(cityurl+'?citycode='+citycode,function(data){
     var fire3 = new Path.Circle({
       center:SUNN.middleMiddle()
     , radius:SUNN.radius + SUNN.increment * 3
-    , fillColor:'#bf1a22'
-    , opacity:1
+    , fillColor:'#d55707'
+    , opacity:0.1
     });
 
     var fire2 = new Path.Circle({
       center:SUNN.middleMiddle()
     , radius:SUNN.radius + SUNN.increment * 2
-    , fillColor:'#ed6725'
-    , opacity:1
+    , fillColor:'#d55707'
+    , opacity:0.5
     });
 
     var fire1 = new Path.Circle({
       center:SUNN.middleMiddle()
     , radius:SUNN.radius + SUNN.increment
-    , fillColor:'#fbcf28'
+    , fillColor:'#d55707'
     , opacity:1
     });
 
@@ -449,7 +453,7 @@ $.getJSON(cityurl+'?citycode='+citycode,function(data){
     });
 
     var campfire = new Raster({
-      source:'https://cloud.githubusercontent.com/assets/1858099/4113110/87d74662-3244-11e4-86df-c2f2ce42d585.png'
+      source:'https://cloud.githubusercontent.com/assets/5893062/4180267/ade33f90-36f0-11e4-83bd-ab7d8eb6b9cf.PNG'
     , position:SUNN.campfirePosition
     }).scale(SUNN.campfireScale);
 
@@ -464,6 +468,7 @@ $.getJSON(cityurl+'?citycode='+citycode,function(data){
     , fontSize:SUNN.clockSize
     , onFrame:function(){
         this.content = SUNN.clockText();
+        this.fillColor = SUNN.rayColor();
       }
     });
 
@@ -476,6 +481,7 @@ $.getJSON(cityurl+'?citycode='+citycode,function(data){
     , fontSize:SUNN.dateSize
     , onFrame:function(){
         this.content = SUNN.dateText();
+        this.fillColor = SUNN.rayColor();
       }
     });
 
@@ -489,23 +495,33 @@ $.getJSON(cityurl+'?citycode='+citycode,function(data){
       window.location.href = backurl;
     };
 
-    var titleDay = new PointText({
-      point:SUNN.titlePosition
-    , content:SUNN.titleTextDay
-    , fillColor:SUNN.titleColor
-    , justification:'center'
-    , fontFamily:'arial,helvetica'
-    , fontSize:SUNN.titleSize
-    });
+    var titleDay = new Raster({
+      source:'https://cloud.githubusercontent.com/assets/5893062/4258419/4b906b52-3ad2-11e4-9431-4b2bc6c8aec9.png'
+    , position:SUNN.titlePosition
+    }).scale(SUNN.titleScale);
 
-    var titleNight = new PointText({
-      point:SUNN.titlePosition
-    , content:SUNN.titleTextNight
-    , fillColor:SUNN.titleColor
-    , justification:'center'
-    , fontFamily:'arial,helvetica'
-    , fontSize:SUNN.titleSize
-    });
+    var titleNight = new Raster({
+      source:'https://cloud.githubusercontent.com/assets/5893062/4258418/494fb8ca-3ad2-11e4-9daf-7951a4265c1f.png'
+    , position:SUNN.titlePosition
+    }).scale(SUNN.titleScale);
+
+    // var titleDay = new PointText({
+    //   point:SUNN.titlePosition
+    // , content:SUNN.titleTextDay
+    // , fillColor:SUNN.titleColor
+    // , justification:'center'
+    // , fontFamily:'arial,helvetica'
+    // , fontSize:SUNN.titleSize
+    // });
+
+    // var titleNight = new PointText({
+    //   point:SUNN.titlePosition
+    // , content:SUNN.titleTextNight
+    // , fillColor:SUNN.titleColor
+    // , justification:'center'
+    // , fontFamily:'arial,helvetica'
+    // , fontSize:SUNN.titleSize
+    // });
 
     new Path.Circle({
       radius:SUNN.globeRadius
@@ -569,7 +585,7 @@ $.getJSON(cityurl+'?citycode='+citycode,function(data){
           var ray = new Path.Circle({
             center:SUNN.center
           , radius:SUNN.radius
-          , fillColor:SUNN.rayColor()
+          , fillColor:SUNN.sunColor()
           , opacity:1
           , onFrame:function(){
               this.scale(1.003);
