@@ -133,7 +133,7 @@ $.getJSON(cityurl+'?citycode='+citycode,function(data){
     var titleTextDay = 'Lights synched with sunn';
     var titleTextNight = 'Lights synched with firelight';
     var titleSize = Modernizr.iphone?16:40;
-    var titleScale = Modernizr.iphone?0.3:0.5;
+    var titleScale = Modernizr.iphone?0.2:0.5;
     var titleColor = '#ffffff';
     var titlePosition = new Point(width()/2, Modernizr.iphone?40:80);
 
