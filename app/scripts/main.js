@@ -17,6 +17,12 @@ var speed = getParameterByName('speed');
 var group = getParameterByName('group');
 var brightness = getParameterByName('brightness');
 
+ip = ip ? ip :'192.168.0.2';
+citycode = citycode ? citycode : '84';
+backurl = backurl ? backurl : 'menu.html';
+cityurl = cityurl ? cityurl: 'city.html';
+speed = speed ? speed : '50';
+
 function xy(x,y){
   $.ajax({
     url:'http://'+ip+'/api/sunndeveloper/groups/'+group+'/action'
